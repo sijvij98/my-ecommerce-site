@@ -1,49 +1,33 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { formatPrice } from "@/data/products";
+import { useSearchParams } from "next/navigation";
 
-export default function OrderSuccessPage() {
-  const [order, setOrder] = useState(null);
-
-  useEffect(() => {
-    try {
-      const raw = window.sessionStorage.getItem("last-order");
-      if (raw) {
-        setOrder(JSON.parse(raw));
-        window.sessionStorage.removeItem("last-order");
-      }
-    } catch {}
-  }, []);
+function SuccessContent() {
+  const params = useSearchParams();
+  const order = params.get("order") || "UQ-000000";
 
   return (
-    <div className="container section">
-      <div className="success-card">
-        <div className="success-icon">✅</div>
-        <h1>Thank You for Your Order!</h1>
-        <p style={{ color: "#777" }}>
-          Your order has been placed successfully. A confirmation email
-          {order ? (
-            <>
-              {" "}has been sent to <strong>{order.email}</strong>
-            </>
-          ) : (
-            " has been sent to you"
-          )}
-          .
+    <div className="container">
+      <div className="success-wrap">
+        <div className="success-seal">✓</div>
+        <span className="eyebrow" style={{ justifyContent: "center" }}>
+          Order Confirmed
+        </span>
+        <h1>
+          Thank you, <em>beautifully</em> done.
+        </h1>
+        <p>
+          Your order is being prepared with care. A confirmation has been sent
+          to your email and mobile.
         </p>
-        {order && (
-          <>
-            <div className="order-number">Order {order.number}</div>
-            <p style={{ color: "#555" }}>
-              {order.itemCount} {order.itemCount === 1 ? "item" : "items"} · Total{" "}
-              <strong>{formatPrice(order.total)}</strong>
-            </p>
-          </>
-        )}
+        <div className="order-num">{order}</div>
+        <p style={{ marginBottom: 34, fontSize: "0.9rem" }}>
+          Expected delivery: 3–5 working days · Free 30-day returns
+        </p>
         <div className="success-actions">
-          <Link href="/products" className="btn btn-primary">
+          <Link href="/products" className="btn btn-gold">
             Continue Shopping
           </Link>
           <Link href="/" className="btn btn-outline">
@@ -52,5 +36,19 @@ export default function OrderSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container" style={{ padding: "120px 0", textAlign: "center" }}>
+          Confirming your order…
+        </div>
+      }
+    >
+      <SuccessContent />
+    </Suspense>
   );
 }

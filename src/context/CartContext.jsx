@@ -1,109 +1,102 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
-import { getProductById, FREE_SHIPPING_THRESHOLD, SHIPPING_FLAT_RATE } from "@/data/products";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { getProduct } from "../data/products";
 
 const CartContext = createContext(null);
-const STORAGE_KEY = "ecommerce-nextjs-cart";
+const STORAGE_KEY = "urbaniq-cart-v1";
 
-function cartReducer(state, action) {
-  switch (action.type) {
-    case "ADD": {
-      const { id, qty = 1 } = action.payload;
-      const existing = state.find((item) => item.id === id);
-      if (existing) {
-        return state.map((item) =>
-          item.id === id ? { ...item, qty: item.qty + qty } : item
-        );
-      }
-      return [...state, { id, qty }];
-    }
-    case "SET_QTY": {
-      const { id, qty } = action.payload;
-      if (qty <= 0) return state.filter((item) => item.id !== id);
-      return state.map((item) => (item.id === id ? { ...item, qty } : item));
-    }
-    case "REMOVE":
-      return state.filter((item) => item.id !== action.payload.id);
-    case "CLEAR":
-      return [];
-    default:
-      return state;
-  }
-}
-
-function loadInitialCart() {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    // Keep only items that still exist in the catalog
-    return Array.isArray(parsed)
-      ? parsed.filter((i) => i && getProductById(i.id) && Number(i.qty) > 0)
-      : [];
-  } catch {
-    return [];
-  }
-}
+const keyOf = (id, size) => `${id}__${size}`;
 
 export function CartProvider({ children }) {
-  const [items, dispatch] = useReducer(cartReducer, [], loadInitialCart);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [items, setItems] = useState([]); // [{id, size, qty}]
+  const [isOpen, setIsOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch {
-      // storage unavailable — cart still works in memory
-    }
-  }, [items]);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setItems(JSON.parse(raw));
+    } catch {}
+    setLoaded(true);
+  }, []);
 
-  const detailedItems = useMemo(
+  useEffect(() => {
+    if (loaded) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch {}
+    }
+  }, [items, loaded]);
+
+  const addItem = (id, size = "M", qty = 1) => {
+    const key = keyOf(id, size);
+    setItems((prev) => {
+      const found = prev.find((i) => keyOf(i.id, i.size) === key);
+      if (found) {
+        return prev.map((i) =>
+          keyOf(i.id, i.size) === key ? { ...i, qty: i.qty + qty } : i
+        );
+      }
+      return [...prev, { id, size, qty }];
+    });
+    setIsOpen(true);
+  };
+
+  const updateQty = (id, size, qty) => {
+    const key = keyOf(id, size);
+    setItems((prev) =>
+      qty <= 0
+        ? prev.filter((i) => keyOf(i.id, i.size) !== key)
+        : prev.map((i) => (keyOf(i.id, i.size) === key ? { ...i, qty } : i))
+    );
+  };
+
+  const removeItem = (id, size) => {
+    const key = keyOf(id, size);
+    setItems((prev) => prev.filter((i) => keyOf(i.id, i.size) !== key));
+  };
+
+  const clear = () => setItems([]);
+
+  const detailed = useMemo(
     () =>
       items
-        .map((item) => ({ ...getProductById(item.id), qty: item.qty }))
-        .filter((item) => item && item.id),
+        .map((i) => ({ ...i, product: getProduct(i.id) }))
+        .filter((i) => i.product),
     [items]
   );
 
-  const subtotal = useMemo(
-    () => detailedItems.reduce((sum, item) => sum + item.price * item.qty, 0),
-    [detailedItems]
-  );
-
   const count = useMemo(
-    () => detailedItems.reduce((sum, item) => sum + item.qty, 0),
-    [detailedItems]
+    () => detailed.reduce((s, i) => s + i.qty, 0),
+    [detailed]
+  );
+  const subtotal = useMemo(
+    () => detailed.reduce((s, i) => s + i.qty * i.product.price, 0),
+    [detailed]
   );
 
-  const shipping = useMemo(() => {
-    if (detailedItems.length === 0) return 0;
-    return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT_RATE;
-  }, [detailedItems, subtotal]);
-
-  const total = subtotal + shipping;
-
-  const value = {
-    items: detailedItems,
-    count,
-    subtotal,
-    shipping,
-    total,
-    isCartOpen,
-    openCart: () => setIsCartOpen(true),
-    closeCart: () => setIsCartOpen(false),
-    addItem: (id, qty = 1) => dispatch({ type: "ADD", payload: { id: String(id), qty } }),
-    setQty: (id, qty) => dispatch({ type: "SET_QTY", payload: { id: String(id), qty } }),
-    removeItem: (id) => dispatch({ type: "REMOVE", payload: { id: String(id) } }),
-    clearCart: () => dispatch({ type: "CLEAR" }),
-  };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider
+      value={{
+        items: detailed,
+        addItem,
+        updateQty,
+        removeItem,
+        clear,
+        count,
+        subtotal,
+        isOpen,
+        setIsOpen,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
-export function useCart() {
+export const useCart = () => {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used inside <CartProvider>");
+  if (!ctx) throw new Error("useCart must be used inside CartProvider");
   return ctx;
-}
+};

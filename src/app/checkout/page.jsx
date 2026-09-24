@@ -1,75 +1,64 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useCart } from "@/context/CartContext";
-import { formatPrice } from "@/data/products";
+import { useCart } from "../../context/CartContext";
+import { inr, FREE_SHIPPING_THRESHOLD } from "../../data/products";
 
-const emptyForm = {
-  email: "",
-  phone: "",
-  firstName: "",
-  lastName: "",
-  address: "",
-  city: "",
-  zip: "",
-  country: "",
-  cardName: "",
-  cardNumber: "",
-  expiry: "",
-  cvc: "",
-};
+const PAY_METHODS = [
+  { id: "card", label: "Card", icon: "💳" },
+  { id: "upi", label: "UPI", icon: "📱" },
+  { id: "cod", label: "COD", icon: "💵" },
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, shipping, total, clearCart } = useCart();
-  const [form, setForm] = useState(emptyForm);
-  const [errors, setErrors] = useState({});
+  const { items, subtotal, clear } = useCart();
+  const [pay, setPay] = useState("card");
   const [placing, setPlacing] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    card: "",
+    expiry: "",
+    cvv: "",
+  });
+  const [errors, setErrors] = useState({});
 
-  if (items.length === 0) {
-    return (
-      <div className="container section" style={{ textAlign: "center" }}>
-        <h1 className="section-title">Nothing to check out</h1>
-        <p className="section-subtitle">Your cart is empty.</p>
-        <Link href="/products" className="btn btn-primary">
-          Browse Products
-        </Link>
-      </div>
-    );
-  }
+  const shipping =
+    subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : 199;
+  const total = subtotal + shipping;
 
-  const set = (field) => (e) => {
-    let value = e.target.value;
-    if (field === "cardNumber") {
-      value = value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
-    }
-    if (field === "expiry") {
-      value = value.replace(/\D/g, "").slice(0, 4);
-      if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
-    }
-    if (field === "cvc") value = value.replace(/\D/g, "").slice(0, 4);
-    setForm((f) => ({ ...f, [field]: value }));
+  const set = (k) => (e) => {
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    setErrors((er) => ({ ...er, [k]: null }));
   };
 
   const validate = () => {
-    const errs = {};
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = "Enter a valid email address.";
-    if (form.phone.trim().length < 7) errs.phone = "Enter a valid phone number.";
-    if (!form.firstName.trim()) errs.firstName = "Required.";
-    if (!form.lastName.trim()) errs.lastName = "Required.";
-    if (!form.address.trim()) errs.address = "Required.";
-    if (!form.city.trim()) errs.city = "Required.";
-    if (!form.zip.trim()) errs.zip = "Required.";
-    if (!form.country.trim()) errs.country = "Required.";
-    if (!form.cardName.trim()) errs.cardName = "Required.";
-    if (form.cardNumber.replace(/\s/g, "").length < 16)
-      errs.cardNumber = "Enter the 16-digit card number.";
-    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(form.expiry)) errs.expiry = "Use MM/YY.";
-    if (form.cvc.length < 3) errs.cvc = "Invalid CVC.";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    const er = {};
+    if (form.name.trim().length < 3) er.name = "Please enter your full name";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      er.email = "Enter a valid email";
+    if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g, "")))
+      er.phone = "Enter a valid 10-digit mobile number";
+    if (form.address.trim().length < 8) er.address = "Enter your full address";
+    if (!form.city.trim()) er.city = "Required";
+    if (!form.state.trim()) er.state = "Required";
+    if (!/^\d{6}$/.test(form.pincode)) er.pincode = "6-digit pincode";
+    if (pay === "card") {
+      if (!/^\d{12,19}$/.test(form.card.replace(/\s/g, "")))
+        er.card = "Enter a valid card number";
+      if (!/^\d{2}\/\d{2}$/.test(form.expiry)) er.expiry = "MM/YY";
+      if (!/^\d{3,4}$/.test(form.cvv)) er.cvv = "3–4 digits";
+    }
+    setErrors(er);
+    return Object.keys(er).length === 0;
   };
 
   const placeOrder = (e) => {
@@ -79,124 +68,171 @@ export default function CheckoutPage() {
       return;
     }
     setPlacing(true);
-    // Simulate payment processing (demo — no real charge)
     setTimeout(() => {
-      const orderNumber = "SN-" + Math.floor(100000 + Math.random() * 900000);
-      const order = {
-        number: orderNumber,
-        total,
-        itemCount: items.reduce((n, i) => n + i.qty, 0),
-        email: form.email,
-        name: `${form.firstName} ${form.lastName}`,
-      };
-      try {
-        window.sessionStorage.setItem("last-order", JSON.stringify(order));
-      } catch {}
-      clearCart();
-      router.push("/order-success");
-    }, 1200);
+      const orderNo =
+        "UQ-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+      clear();
+      router.push(`/order-success?order=${orderNo}`);
+    }, 1400);
   };
 
-  const field = (name, label, props = {}) => (
-    <div className="form-group">
-      <label htmlFor={name}>{label}</label>
+  const field = (key, label, props = {}, full = false) => (
+    <div className={`field ${full ? "full" : ""}`} key={key}>
+      <label htmlFor={key}>{label}</label>
       <input
-        id={name}
-        value={form[name]}
-        onChange={set(name)}
-        className={errors[name] ? "input-error" : ""}
+        id={key}
+        value={form[key]}
+        onChange={set(key)}
+        className={errors[key] ? "invalid" : ""}
         {...props}
       />
-      {errors[name] && <div className="field-error">{errors[name]}</div>}
+      {errors[key] && <span className="err">{errors[key]}</span>}
     </div>
   );
 
-  return (
-    <div className="container section">
-      <h1 className="section-title" style={{ textAlign: "left", marginBottom: "2rem" }}>
-        Checkout
-      </h1>
-
-      <div className="demo-note">
-        ⚠️ Demo checkout — no real payment is processed. Use any dummy card details (e.g.
-        4111 1111 1111 1111).
+  if (items.length === 0 && !placing) {
+    return (
+      <div className="container">
+        <div className="empty-state" style={{ padding: "110px 20px" }}>
+          <h3>Your bag is empty</h3>
+          <p>Add something beautiful before checking out.</p>
+          <Link href="/products" className="btn btn-gold" style={{ marginTop: 24 }}>
+            Shop the Collection
+          </Link>
+        </div>
       </div>
+    );
+  }
 
-      <form onSubmit={placeOrder} noValidate>
-        <div className="checkout-grid">
-          <div className="checkout-form-card">
-            <div className="form-section">
-              <h3>Contact Information</h3>
-              <div className="form-row">
-                {field("email", "Email", { type: "email", placeholder: "you@example.com" })}
-                {field("phone", "Phone", { placeholder: "+1 555 123 4567" })}
-              </div>
+  return (
+    <div className="container">
+      <div className="checkout-grid">
+        <form onSubmit={placeOrder} noValidate>
+          <div className="co-card">
+            <h3>Contact</h3>
+            <p>We&apos;ll send your order updates here.</p>
+            <div className="field-grid">
+              {field("name", "Full name", { placeholder: "Aarav Kapoor", autoComplete: "name" })}
+              {field("email", "Email", {
+                placeholder: "you@example.com",
+                type: "email",
+                autoComplete: "email",
+              })}
+              {field("phone", "Mobile", {
+                placeholder: "98765 43210",
+                inputMode: "numeric",
+                autoComplete: "tel",
+              })}
             </div>
+          </div>
 
-            <div className="form-section">
-              <h3>Shipping Address</h3>
-              <div className="form-row">
-                {field("firstName", "First Name", { placeholder: "John" })}
-                {field("lastName", "Last Name", { placeholder: "Doe" })}
-              </div>
-              {field("address", "Street Address", { placeholder: "123 Main Street, Apt 4" })}
-              <div className="form-row">
-                {field("city", "City", { placeholder: "New York" })}
-                {field("zip", "ZIP / Postal Code", { placeholder: "10001" })}
-              </div>
-              {field("country", "Country", { placeholder: "United States" })}
-            </div>
-
-            <div className="form-section">
-              <h3>Payment Details</h3>
-              {field("cardName", "Name on Card", { placeholder: "John Doe" })}
-              {field("cardNumber", "Card Number", {
-                placeholder: "4111 1111 1111 1111",
+          <div className="co-card">
+            <h3>Shipping Address</h3>
+            <p>Dispatched within 24 hours, delivered in 3–5 days.</p>
+            <div className="field-grid">
+              {field("address", "Address", {
+                placeholder: "Flat, street, landmark",
+                autoComplete: "street-address",
+              }, true)}
+              {field("city", "City", { placeholder: "Mumbai" })}
+              {field("state", "State", { placeholder: "Maharashtra" })}
+              {field("pincode", "Pincode", {
+                placeholder: "400001",
                 inputMode: "numeric",
               })}
-              <div className="form-row">
-                {field("expiry", "Expiry (MM/YY)", { placeholder: "12/28", inputMode: "numeric" })}
-                {field("cvc", "CVC", { placeholder: "123", inputMode: "numeric" })}
-              </div>
             </div>
-
-            <button type="submit" className="btn btn-success btn-block" disabled={placing}>
-              {placing ? "Processing..." : `Pay ${formatPrice(total)}`}
-            </button>
-            <Link href="/cart" className="btn btn-outline btn-block">
-              ← Back to Cart
-            </Link>
           </div>
 
-          <div className="order-summary">
-            <h3>Order Summary</h3>
-            {items.map((item) => (
-              <div className="summary-item" key={item.id}>
-                <img src={item.image} alt={item.name} />
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.92rem" }}>{item.name}</div>
-                  <div className="qty-tag">Qty: {item.qty}</div>
-                </div>
-                <div className="item-total">{formatPrice(item.price * item.qty)}</div>
-              </div>
-            ))}
-            <div className="summary-row" style={{ marginTop: "1rem" }}>
-              <span>Subtotal</span>
-              <span>{formatPrice(subtotal)}</span>
+          <div className="co-card">
+            <h3>Payment</h3>
+            <p>This is a demo checkout — no real charge is made.</p>
+            <div className="pay-methods">
+              {PAY_METHODS.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  className={`pay-opt ${pay === m.id ? "active" : ""}`}
+                  onClick={() => setPay(m.id)}
+                >
+                  <strong>{m.icon}</strong>
+                  {m.label}
+                </button>
+              ))}
             </div>
-            <div className="summary-row">
+            {pay === "card" && (
+              <div className="field-grid">
+                {field("card", "Card number", {
+                  placeholder: "1234 5678 9012 3456",
+                  inputMode: "numeric",
+                }, true)}
+                {field("expiry", "Expiry", { placeholder: "MM/YY" })}
+                {field("cvv", "CVV", {
+                  placeholder: "123",
+                  inputMode: "numeric",
+                  type: "password",
+                })}
+              </div>
+            )}
+            {pay === "upi" && (
+              <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
+                A collect request will be sent to your UPI app after you place
+                the order.
+              </p>
+            )}
+            {pay === "cod" && (
+              <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
+                Pay in cash or UPI when your order arrives. Please keep the
+                exact amount ready.
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-gold btn-block"
+            disabled={placing}
+            style={{ padding: "18px", fontSize: "0.9rem" }}
+          >
+            {placing ? "Placing your order…" : `Place Order — ${inr(total)}`}
+          </button>
+          <p className="cart-note">
+            By placing this order you agree to our terms. Secure 256-bit
+            encrypted checkout.
+          </p>
+        </form>
+
+        <aside className="summary-card">
+          <h3>Order Summary</h3>
+          {items.map((i) => (
+            <div className="co-summary-line" key={`${i.id}__${i.size}`}>
+              <img src={i.product.image} alt={i.product.name} />
+              <div className="grow">
+                <h5>{i.product.name}</h5>
+                <small>
+                  Size {i.size} · Qty {i.qty}
+                </small>
+              </div>
+              <span>{inr(i.product.price * i.qty)}</span>
+            </div>
+          ))}
+          <div style={{ marginTop: 18 }}>
+            <div className="sum-row">
+              <span>Subtotal</span>
+              <span>{inr(subtotal)}</span>
+            </div>
+            <div className="sum-row">
               <span>Shipping</span>
-              <span className={shipping === 0 ? "free-shipping" : ""}>
-                {shipping === 0 ? "FREE" : formatPrice(shipping)}
+              <span className={shipping === 0 ? "free-ship" : ""}>
+                {shipping === 0 ? "Complimentary" : inr(shipping)}
               </span>
             </div>
-            <div className="summary-row grand">
+            <div className="sum-row grand">
               <span>Total</span>
-              <span>{formatPrice(total)}</span>
+              <strong>{inr(total)}</strong>
             </div>
           </div>
-        </div>
-      </form>
+        </aside>
+      </div>
     </div>
   );
 }

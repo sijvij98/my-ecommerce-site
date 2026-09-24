@@ -1,83 +1,40 @@
-# ShopNext — E-Commerce Website (Next.js)
+# URBANIQ — Premium Clothing E-Commerce (Next.js)
 
-A fully functional e-commerce demo store built with **Next.js 14 (App Router)** and React 18.
-Recreated from a plain HTML/CSS/JS storefront and upgraded with real routing, a persistent cart,
-product search/filtering, and a working checkout flow — all with dummy products.
+**Wear Your Story.** A fully functional, dark-luxury e-commerce website for a women's & men's clothing brand, built with **Next.js 14 (App Router)** and React 18.
+
+## Brand & Theme
+
+- **Brand:** URBANIQ — modern luxury clothing for Women & Men
+- **Theme:** Deep charcoal + champagne gold (matches the Urbaniq logo in `public/logo.png`)
+- **Typography:** Playfair Display (serif headings) + Jost (body), via Google Fonts
+- **Currency:** Indian Rupee (₹)
 
 ## Features
 
-- **Home page** — hero, shop-by-category tiles, featured products, trust perks
-- **Product listing** (`/products`) — live search, category filter pills, sorting (featured / price / rating)
-- **Product detail** (`/products/[id]`) — image, rating, stock status, quantity stepper, related products
-- **Cart sidebar** — slide-in mini cart on every page (add, quantity +/−, remove, subtotal)
-- **Cart page** (`/cart`) — full cart with order summary, free-shipping progress (free over $50)
-- **Checkout** (`/checkout`) — contact + shipping + payment form with validation and a demo payment step
-- **Order success** (`/order-success`) — confirmation with generated order number
-- **Persistent cart** — saved in `localStorage`, survives page reloads
-- **12 dummy products** across Electronics, Fashion, Home and Sports (`src/data/products.js`)
-- Fully responsive layout, no UI framework required
+- **Home:** cinematic hero, Women/Men category tiles, bestsellers, craft strip, editorial banner, testimonials, newsletter signup
+- **Shop:** gender tabs (All / Women / Men), category pills, live search, 4 sort orders, badge collections (Bestsellers / New Arrivals)
+- **Product pages:** colour dots, size selector (XS–XL), quantity, accordions (fit / fabric / shipping), ratings, related products
+- **Cart:** slide-in drawer + full bag page, free-shipping progress bar (₹4,999 threshold), quantity controls, localStorage persistence
+- **Checkout:** contact + address + payment (Card / UPI / COD) with full validation, order summary
+- **Order success:** confirmation seal + generated order number
+- 16 clothing products with real photography (Unsplash), fabric & fit notes
 
-## Getting started
-
-Requires **Node.js 18+**.
+## Run Locally
 
 ```bash
 npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-### Production build
-
-```bash
-npm run build
-npm start
-```
-
-## Project structure
-
-```
-src/
-  app/
-    layout.jsx            # Root layout (header, cart sidebar, footer)
-    page.jsx              # Home page
-    globals.css           # All styles
-    products/page.jsx     # Product listing
-    products/[id]/page.jsx# Product detail
-    cart/page.jsx         # Cart page
-    checkout/page.jsx     # Checkout form
-    order-success/page.jsx# Order confirmation
-  components/
-    Header.jsx            # Sticky header + cart button
-    Footer.jsx
-    CartSidebar.jsx       # Slide-in mini cart
-    ProductCard.jsx       # Product card
-    ProductListing.jsx    # Search / filter / sort logic
-  context/
-    CartContext.jsx       # Global cart state (React Context + localStorage)
-  data/
-    products.js           # Dummy product catalog — edit this to add your products
-```
-
-## Customising
-
-- **Products:** edit `src/data/products.js` (name, price, category, image, description, stock).
-- **Images:** product images currently use `picsum.photos` placeholder URLs — swap in your own URLs or put files in `public/` and reference them as `/your-image.jpg`.
-- **Shipping rules:** `FREE_SHIPPING_THRESHOLD` and `SHIPPING_FLAT_RATE` live in `src/data/products.js`.
-- **Payments:** checkout is a demo (no real charge). Plug in Stripe/Razorpay/etc. in `src/app/checkout/page.jsx`.
-
-## Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: Next.js e-commerce store"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
-git push -u origin main
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm start        # serve production build
 ```
 
 ## Deploy
 
-Easiest: import the repo at [vercel.com](https://vercel.com) — it auto-detects Next.js. No config needed.
+Push to GitHub, then import the repo in [Vercel](https://vercel.com) — it auto-detects Next.js. Every push to `main` redeploys automatically.
+
+## Customise
+
+- Products: `src/data/products.js`
+- Colours/fonts: CSS variables at the top of `src/app/globals.css`
+- Logo: replace `public/logo.png`
+- Free-shipping threshold: `FREE_SHIPPING_THRESHOLD` in `src/data/products.js`
