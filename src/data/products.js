@@ -291,8 +291,9 @@ export const products = [
   },
 ];
 
-export const HERO_IMAGE = img("photo-1539109136881-3be0616acf4b");
-export const WOMEN_TILE = img("photo-1483985988355-763728e1935b");
+export const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=2400&q=80&auto=format&fit=crop";
+export const WOMEN_TILE = img("photo-1529139574466-a303027c1d8b");
 export const MEN_TILE = img("photo-1507679799987-c73779587ccf");
 export const EDITORIAL_IMAGE = img("photo-1445205170230-053b83016050");
 

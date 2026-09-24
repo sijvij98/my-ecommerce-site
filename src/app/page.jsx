@@ -3,6 +3,7 @@ import ProductCard from "../components/ProductCard";
 import Newsletter from "../components/Newsletter";
 import {
   products,
+  inr,
   HERO_IMAGE,
   WOMEN_TILE,
   MEN_TILE,
@@ -87,43 +88,61 @@ export default function Home() {
     <>
       {/* HERO */}
       <section className="hero">
-        <div className="hero-bg">
-          <img src={HERO_IMAGE} alt="Urbaniq Autumn Winter 2026 collection" />
-        </div>
-        <div className="hero-veil" />
-        <div className="container">
+        <div className="container hero-inner">
           <div className="hero-content">
-            <span className="eyebrow fade-up">✦ Just launched — AW &lsquo;26</span>
+            <span className="eyebrow fade-up">✦ New drop live — AW &lsquo;26</span>
             <h1 className="fade-up fade-up-1">
-              The new drop <em>is here</em>
+              New season.
+              <br />
+              <em>New icons.</em> Now live.
             </h1>
             <p className="fade-up fade-up-2">
-              Sixteen icons, one standard: uncompromising. Be first to wear
-              the Autumn/Winter &lsquo;26 collection — silk, cashmere, selvedge
-              and tailoring, live now.
+              Sixteen icons, one standard: uncompromising. Silk, cashmere,
+              selvedge and sharp tailoring — the Autumn/Winter &lsquo;26
+              collection just landed.
             </p>
-            <div className="hero-ctas fade-up fade-up-3">
+            <div className="hero-offer fade-up fade-up-2">
+              <div>
+                <strong>Flat 10% off</strong>
+                <span>
+                  on the new collection · use code <b>URBAN10</b>
+                </span>
+              </div>
               <Link href="/products?badge=New" className="btn btn-gold">
-                Shop the New Drop
-              </Link>
-              <Link href="/products" className="btn btn-outline">
-                Explore All
+                Shop the Drop
               </Link>
             </div>
-            <div className="hero-meta fade-up fade-up-3">
-              <div>
-                <strong>16</strong>
-                <span>New styles</span>
-              </div>
-              <div>
-                <strong>4.8★</strong>
-                <span>Avg. rating</span>
-              </div>
-              <div>
-                <strong>10%</strong>
-                <span>Off · code URBAN10</span>
-              </div>
+            <div className="hero-links fade-up fade-up-3">
+              <Link href="/products">Explore everything →</Link>
             </div>
+            <div className="hero-trust fade-up fade-up-3">
+              <span>✓ Free shipping over ₹4,999</span>
+              <span>✓ 30-day easy returns</span>
+              <span>✓ 4.8★ from 2,400+ reviews</span>
+            </div>
+          </div>
+          <div className="hero-visual fade-up fade-up-1">
+            <img
+              src={HERO_IMAGE}
+              alt="URBANIQ Autumn Winter 2026 new collection launch"
+            />
+            <div className="float-chip">✦ 16 new styles just landed</div>
+            <Link
+              href="/products/1"
+              className="float-card"
+              aria-label={`Shop ${products[0].name}`}
+            >
+              <img src={products[0].image} alt={products[0].name} />
+              <div>
+                <strong>{products[0].name}</strong>
+                <span className="fc-stars">★★★★★ {products[0].rating}</span>
+                <span className="fc-price">
+                  {inr(products[0].price)}
+                  <s>{inr(products[0].mrp)}</s>
+                </span>
+              </div>
+              <span className="fc-arrow">→</span>
+            </Link>
           </div>
         </div>
       </section>
