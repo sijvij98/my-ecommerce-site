@@ -11,7 +11,7 @@
   --muted: #a89c84;
   --line: rgba(201, 162, 75, 0.18);
   --line-soft: rgba(243, 236, 221, 0.09);
-  --serif: "Playfair Display", Georgia, serif;
+  --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "Jost", "Segoe UI", system-ui, sans-serif;
   --radius: 14px;
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
@@ -184,15 +184,120 @@ textarea {
 }
 
 /* ---------- Announcement + Header ---------- */
-.announce {
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold) 50%, var(--gold-deep));
+/* ---------- Offer ticker (scrolling) ---------- */
+.ticker {
+  background: linear-gradient(
+    90deg,
+    var(--gold-deep),
+    var(--gold) 40%,
+    var(--gold-2) 50%,
+    var(--gold) 60%,
+    var(--gold-deep)
+  );
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: ticker-scroll 32s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+.ticker-set {
+  display: inline-flex;
+  align-items: center;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 36px;
   color: #171208;
-  text-align: center;
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
+  font-weight: 600;
+}
+.ticker-item i {
+  font-style: normal;
+  font-size: 0.85rem;
+}
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Cormorant Garamond renders light — strengthen key headlines */
+.section-title,
+.hero h1,
+.shop-hero h1,
+.pd-info h1,
+.success-wrap h1,
+.cart-head h3,
+.summary-card h3,
+.co-card h3,
+.pcard-name,
+.cart-line h4,
+.empty-state h3 {
+  font-weight: 600;
+}
+
+/* ---------- Category circles ---------- */
+.cat-circles {
+  display: flex;
+  justify-content: center;
+  gap: clamp(16px, 3.6vw, 42px);
+  margin-top: 38px;
+}
+.circle-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 148px;
+  flex: none;
+}
+.circle-cat .ring {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+  padding: 6px;
+  border: 1px solid var(--line-soft);
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(201, 162, 75, 0.14),
+    transparent 65%
+  );
+  transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+}
+.circle-cat img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.circle-cat span {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
   font-weight: 500;
-  padding: 9px 12px;
+  text-align: center;
+  transition: color 0.3s;
+}
+.circle-cat:hover .ring {
+  transform: translateY(-6px);
+  border-color: var(--gold);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 5px rgba(201, 162, 75, 0.12);
+}
+.circle-cat:hover span {
+  color: var(--gold-2);
 }
 
 .header {
@@ -1715,6 +1820,17 @@ textarea {
   }
 }
 @media (max-width: 860px) {
+  .cat-circles {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 6px 2px 20px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .circle-cat {
+    scroll-snap-align: start;
+  }
   .nav {
     display: none;
   }

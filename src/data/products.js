@@ -291,10 +291,19 @@ export const products = [
   },
 ];
 
-export const HERO_IMAGE = img("photo-1469334031218-e382a71b716b");
+export const HERO_IMAGE = img("photo-1539109136881-3be0616acf4b");
 export const WOMEN_TILE = img("photo-1483985988355-763728e1935b");
 export const MEN_TILE = img("photo-1507679799987-c73779587ccf");
 export const EDITORIAL_IMAGE = img("photo-1445205170230-053b83016050");
+
+export const CATEGORY_TILES = [
+  { name: "Dresses", image: img("photo-1595777457583-95e059d581b8") },
+  { name: "Shirts", image: img("photo-1596755094514-f87e34085b2c") },
+  { name: "T-Shirts", image: img("photo-1521572163474-6864f9cf17ab") },
+  { name: "Bottoms", image: img("photo-1541099649105-f69ad21f3246") },
+  { name: "Knitwear", image: img("photo-1434389677669-e08b4cac3105") },
+  { name: "Outerwear", image: img("photo-1551028719-00167b16eac5") },
+];
 
 export const getProduct = (id) =>
   products.find((p) => String(p.id) === String(id));

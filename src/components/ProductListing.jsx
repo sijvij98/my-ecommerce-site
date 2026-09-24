@@ -16,11 +16,14 @@ export default function ProductListing() {
   const params = useSearchParams();
   const presetGender = params.get("gender") || "all";
   const presetBadge = params.get("badge") || null;
+  const presetCategory = params.get("category") || "All";
 
   const [gender, setGender] = useState(
     ["women", "men"].includes(presetGender) ? presetGender : "all"
   );
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState(
+    ["All", ...CATEGORIES].includes(presetCategory) ? presetCategory : "All"
+  );
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
 

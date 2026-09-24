@@ -21,10 +21,27 @@ export default function Header() {
     return false;
   };
 
+  const offers = [
+    "Just dropped — flat 10% off the new collection · code URBAN10",
+    "Complimentary shipping across India on orders over ₹4,999",
+    "30-day easy returns · no questions asked",
+  ];
+
   return (
     <>
-      <div className="announce">
-        Complimentary shipping across India on orders over ₹4,999
+      <div className="ticker" aria-label="Current offers">
+        <div className="ticker-track">
+          {[0, 1].map((dup) => (
+            <div className="ticker-set" key={dup} aria-hidden={dup === 1}>
+              {offers.map((o) => (
+                <span className="ticker-item" key={o}>
+                  <i>✦</i>
+                  {o}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       <header className="header">
         <div className="container header-inner">

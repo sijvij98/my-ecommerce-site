@@ -7,6 +7,7 @@ import {
   WOMEN_TILE,
   MEN_TILE,
   EDITORIAL_IMAGE,
+  CATEGORY_TILES,
 } from "../data/products";
 
 const craftItems = [
@@ -92,37 +93,61 @@ export default function Home() {
         <div className="hero-veil" />
         <div className="container">
           <div className="hero-content">
-            <span className="eyebrow fade-up">Autumn / Winter 2026</span>
+            <span className="eyebrow fade-up">✦ Just launched — AW &lsquo;26</span>
             <h1 className="fade-up fade-up-1">
-              Dress Beyond <em>Ordinary</em>
+              The new drop <em>is here</em>
             </h1>
             <p className="fade-up fade-up-2">
-              Premium fabrics, honest craftsmanship and timeless silhouettes —
-              wardrobe essentials for women and men, designed to be worn on
-              repeat.
+              Sixteen icons, one standard: uncompromising. Be first to wear
+              the Autumn/Winter &lsquo;26 collection — silk, cashmere, selvedge
+              and tailoring, live now.
             </p>
             <div className="hero-ctas fade-up fade-up-3">
-              <Link href="/products?gender=women" className="btn btn-gold">
-                Shop Women
+              <Link href="/products?badge=New" className="btn btn-gold">
+                Shop the New Drop
               </Link>
-              <Link href="/products?gender=men" className="btn btn-outline">
-                Shop Men
+              <Link href="/products" className="btn btn-outline">
+                Explore All
               </Link>
             </div>
             <div className="hero-meta fade-up fade-up-3">
               <div>
-                <strong>16+</strong>
-                <span>Curated styles</span>
+                <strong>16</strong>
+                <span>New styles</span>
               </div>
               <div>
                 <strong>4.8★</strong>
                 <span>Avg. rating</span>
               </div>
               <div>
-                <strong>100%</strong>
-                <span>Premium fabrics</span>
+                <strong>10%</strong>
+                <span>Off · code URBAN10</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CATEGORY CIRCLES */}
+      <section className="section-tight" style={{ paddingTop: 70 }}>
+        <div className="container" style={{ textAlign: "center" }}>
+          <span className="eyebrow" style={{ justifyContent: "center" }}>
+            Shop by Category
+          </span>
+          <div className="cat-circles">
+            {CATEGORY_TILES.map((c) => (
+              <Link
+                key={c.name}
+                href={`/products?category=${encodeURIComponent(c.name)}`}
+                className="circle-cat"
+                aria-label={`Shop ${c.name}`}
+              >
+                <span className="ring">
+                  <img src={c.image} alt={c.name} loading="lazy" />
+                </span>
+                <span>{c.name}</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
