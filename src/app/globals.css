@@ -27,6 +27,11 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   font-family: var(--sans);
   background: var(--bg);
@@ -111,8 +116,9 @@ textarea {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px 24px;
   margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 .link-arrow {
   display: inline-flex;
@@ -339,6 +345,7 @@ textarea {
   color: var(--gold);
 }
 .brand-tag {
+  display: block;
   font-size: 0.58rem;
   letter-spacing: 0.42em;
   text-transform: uppercase;
@@ -583,12 +590,18 @@ textarea {
   object-fit: cover;
   flex: none;
 }
+.float-card > div {
+  min-width: 0;
+}
 .float-card strong {
   display: block;
   font-family: var(--serif);
   font-weight: 600;
   font-size: 1.02rem;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .fc-stars {
   display: block;
@@ -1466,6 +1479,8 @@ textarea {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+  overflow-wrap: anywhere;
+  line-height: 2;
 }
 .crumbs a:hover {
   color: var(--gold-2);
@@ -1917,6 +1932,9 @@ textarea {
   .craft-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .testi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .pd-wrap {
     grid-template-columns: 1fr;
     gap: 36px;
@@ -1970,10 +1988,10 @@ textarea {
     position: relative;
   }
   .cat-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .cat-tile {
-    min-height: 300px;
+    min-height: 260px;
   }
   .testi-grid {
     grid-template-columns: 1fr;
@@ -1992,6 +2010,52 @@ textarea {
   }
 }
 @media (max-width: 640px) {
+  .header-inner {
+    height: 66px;
+    gap: 10px;
+  }
+  .brand {
+    gap: 10px;
+  }
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+  }
+  .brand-name {
+    font-size: 1.22rem;
+  }
+  .brand-tag {
+    display: none;
+  }
+  .ticker-item {
+    padding: 8px 22px;
+    font-size: 0.64rem;
+    letter-spacing: 0.18em;
+  }
+  /* Prevent iOS auto-zoom on focus */
+  .field input,
+  .field select,
+  .search-box input,
+  .nl-form input {
+    font-size: 16px;
+  }
+  .pay-opt {
+    padding: 12px 6px;
+    font-size: 0.78rem;
+  }
+  .pd-trust {
+    gap: 8px;
+  }
+  .pd-trust div {
+    padding: 12px 6px;
+    font-size: 0.68rem;
+  }
+  .cat-grid {
+    grid-template-columns: 1fr;
+  }
+  .cat-tile {
+    min-height: 300px;
+  }
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;

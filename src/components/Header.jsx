@@ -51,7 +51,7 @@ export default function Header() {
               <span className="brand-name">
                 URBAN<span>IQ</span>
               </span>
-              <span className="brand-tag" style={{ display: "block" }}>
+              <span className="brand-tag">
                 Wear your story
               </span>
             </span>
