@@ -1,0 +1,121 @@
+/* ==========================================================================
+   SOCIAL PROOF TOAST — styles
+   Brand: URBANIQ (dark charcoal + champagne gold)
+   Paste this whole file's contents into your stylesheet, or link it:
+       <link rel="stylesheet" href="social-proof.css">
+   ========================================================================== */
+
+/* ---- The toast box ---- */
+.sp-toast {
+  position: fixed;
+  left: 24px;                 /* bottom-left corner on desktop */
+  bottom: 24px;
+  z-index: 9999;              /* stays above page content */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 340px;
+  max-width: calc(100vw - 48px);
+  padding: 12px 36px 12px 12px;  /* extra right space for the close button */
+  background: #1c1a17;                          /* dark charcoal */
+  border: 1px solid rgba(201, 162, 75, 0.35);   /* champagne gold edge */
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  color: #f3eee2;
+  font-family: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Hidden state: parked off-screen to the left + invisible */
+  transform: translateX(-120%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1.15),  /* slide with a soft bounce */
+    opacity 0.35s ease,
+    visibility 0s linear 0.5s;   /* hide only after the slide-out finishes */
+  pointer-events: none;  /* clicks pass through while hidden */
+}
+
+/* Visible state: slides into place */
+.sp-toast.sp-show {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1.15),
+    opacity 0.35s ease;
+  pointer-events: auto;
+}
+
+/* ---- Product thumbnail ---- */
+.sp-thumb {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  background: #2a2620;
+}
+
+/* ---- Text lines ---- */
+.sp-text { min-width: 0; }  /* lets long product names shrink instead of stretching the box */
+
+.sp-line1,
+.sp-line2,
+.sp-line3 { margin: 0; line-height: 1.45; }
+
+.sp-line1 { font-size: 14px; font-weight: 600; color: #ffffff; }
+
+.sp-line2 {
+  font-size: 13px;
+  color: #d8d0bd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  /* long names get "…" instead of breaking the layout */
+}
+
+.sp-line3 { font-size: 12px; color: #a89e88; margin-top: 2px; }
+
+/* ---- "Verified Buyer" badge ---- */
+.sp-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #c9a24b;
+  font-weight: 600;
+}
+.sp-verified svg { width: 13px; height: 13px; flex: 0 0 13px; }
+
+/* ---- Close (×) button ---- */
+.sp-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: #8f8672;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.sp-close:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); }
+
+/* ---- Mobile: bottom-center, slimmer ---- */
+@media (max-width: 640px) {
+  .sp-toast {
+    left: 50%;
+    right: auto;
+    bottom: 14px;
+    width: calc(100vw - 28px);
+    padding: 10px 32px 10px 10px;
+    gap: 10px;
+    transform: translate(-50%, 160%);  /* hidden: parked below the screen */
+  }
+  .sp-toast.sp-show { transform: translate(-50%, 0); }
+  .sp-thumb { width: 46px; height: 46px; flex-basis: 46px; }
+  .sp-line1 { font-size: 13px; }
+  .sp-line2 { font-size: 12px; }
+}
