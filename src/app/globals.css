@@ -2125,3 +2125,98 @@ textarea {
     gap: 30px;
   }
 }
+
+/* ================= Social Proof Toast ================= */
+.sp-toast {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 340px;
+  max-width: calc(100vw - 48px);
+  padding: 12px 36px 12px 12px;
+  background: #1c1a17;
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  color: #f3eee2;
+  font-family: var(--sans);
+  transform: translateX(-120%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1.15),
+    opacity 0.35s ease,
+    visibility 0s linear 0.5s;
+  pointer-events: none;
+}
+.sp-toast.sp-show {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1.15),
+    opacity 0.35s ease;
+  pointer-events: auto;
+}
+.sp-thumb {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  background: #2a2620;
+}
+.sp-text { min-width: 0; }
+.sp-line1, .sp-line2, .sp-line3 { margin: 0; line-height: 1.45; }
+.sp-line1 { font-size: 14px; font-weight: 600; color: #fff; }
+.sp-line2 {
+  font-size: 13px;
+  color: #d8d0bd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-line3 { font-size: 12px; color: #a89e88; margin-top: 2px; }
+.sp-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.sp-verified svg { width: 13px; height: 13px; flex: 0 0 13px; }
+.sp-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: #8f8672;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.sp-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+@media (max-width: 640px) {
+  .sp-toast {
+    left: 50%;
+    right: auto;
+    bottom: 14px;
+    width: calc(100vw - 28px);
+    padding: 10px 32px 10px 10px;
+    gap: 10px;
+    transform: translate(-50%, 160%);
+  }
+  .sp-toast.sp-show { transform: translate(-50%, 0); }
+  .sp-thumb { width: 46px; height: 46px; flex-basis: 46px; }
+  .sp-line1 { font-size: 13px; }
+  .sp-line2 { font-size: 12px; }
+}

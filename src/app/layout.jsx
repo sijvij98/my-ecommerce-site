@@ -3,6 +3,7 @@ import { CartProvider } from "../context/CartContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CartSidebar from "../components/CartSidebar";
+import SocialProofToast from "../components/SocialProofToast";
 
 export const metadata = {
   title: "URBANIQ — Modern Luxury Clothing for Women & Men",
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
           <main>{children}</main>
           <Footer />
           <CartSidebar />
+          <SocialProofToast />
         </CartProvider>
       </body>
     </html>
